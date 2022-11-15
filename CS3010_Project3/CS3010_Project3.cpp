@@ -12,18 +12,20 @@ Due Date: 11/19/2022
 using namespace std;
 
 double f1(double);
+double df1(double);
 double f2(double);
+double df2(double);
 void bisection(int, double, double, int, double);
 void falsePos(int, double, double, int, double);
-void newtonRaphson();
-void secant();
+void newtonRaphson(int, double, int, double, double);
+void secant(int, double, double, int, double);
 
 int main()
 {
     int max = 100;
     string func1 = "2x^3 - 11.7x^2 + 17.7x - 5";
     string func2 = "x + 10 - xcosh(50/x)";
-    double a, b;
+    double a, b, x;
 
     cout << "---Bisection Method of f(x) = " << func1 << "---\n";
     cout << "Enter the a value: ";
@@ -39,6 +41,11 @@ int main()
     cin >> b;
     falsePos(1, a, b, max, 0.01);
 
+    cout << "\n---Newton Raphson of f(x) = " << func1 << "---\n";
+    cout << "Enter the x value: ";
+    cin >> x;
+    newtonRaphson(1, x, max, 0.01, 0.0000001);
+
     return 0;
 }
 
@@ -47,10 +54,20 @@ double f1(double x)
 {
     return ((2 * pow(x, 3)) - (11.7 * pow(x, 2)) + (17.7 * x) - 5);
 }
+//The derivative of f1
+double df1(double x)
+{
+    return ((6 * pow(x, 2)) - (23.4 * x) + 11.7);
+}
 //The function f(x) = x + 10 - xcosh(50/x)
 double f2(double x)
 {
     return (x + 10 - (x * cosh(50 / x)));
+}
+//The derivative of f2
+double df2(double x)
+{
+    return (((50 * sinh(50 / x)) / x) - cosh(50 / x) + 1);
 }
 
 void bisection(int func, double a, double b, int max, double err)
@@ -79,7 +96,7 @@ void bisection(int func, double a, double b, int max, double err)
 
     double error = b - a;
 
-    for (int i = 0; i < max; i++)
+    for (int i = 1; i <= max; i++)
     {
         error = error / 2;
         c = a + error;
@@ -144,7 +161,7 @@ void falsePos(int func, double a, double b, int max, double err)
         return;
     }
 
-    for (int i = 0; i < max; i++)
+    for (int i = 1; i <= max; i++)
     {
         if (i != 0)
         {
@@ -199,5 +216,119 @@ void falsePos(int func, double a, double b, int max, double err)
             b = c;
             fb = fc;
         }
+    }
+}
+
+void newtonRaphson(int func, double x, int max, double err, double eps)
+{
+    double fx = 0, fp = 0, d = 0, xn = x;
+    
+    cout << "  n  " << setw(8) << "x  " << setw(10) << "f(x)  " << setw(10) << "f'(x)  " << setw(8) << "d  " << setw(10) << "next x  " << setw(7) << "err" << endl;
+    for (int i = 1; i <= max; i++)
+    {
+        if (func == 1)
+        {
+            fx = f1(x);
+        }
+        else if (func == 2)
+        {
+            fx = f2(x);
+        }
+
+        if (func == 1)
+        {
+            fp = df1(x);
+        }
+        else if (func == 2)
+        {
+            fp = df2(x);
+        }
+
+        if (abs(fp) < eps)
+        {
+            cout << "Derivative is too small\n";
+            return;
+        }
+
+        d = fx / fp;
+        xn -= d;
+        //Print table
+        cout << right << setw(3) << i << "  ";
+        cout << right << setfill(' ') << setw(6) << fixed << showpoint << setprecision(4) << x << "  ";
+        cout << right << setw(8) << fixed << showpoint << setprecision(4) << fx << "  ";
+        cout << right << setw(8) << fixed << showpoint << setprecision(4) << fp << "  ";
+        cout << right << setw(6) << fixed << showpoint << setprecision(4) << d << "  ";
+        cout << right << setw(8) << fixed << showpoint << setprecision(4) << xn << "  ";
+        cout << right << setw(9) << setprecision(10) << abs(d) << endl;
+        x = xn;
+        if (abs(d) < err)
+        {
+            cout << "Converged at iteration " << i << ". Root is approxmiately " << x << endl;
+            return;
+        }
+    }
+}
+
+void secant(int func, double a, double b, int max, double err)
+{
+    double fa = 0, fb = 0, d = 0;
+    if (func == 1)
+    {
+        fa = f1(a);
+        fb = f1(b);
+    }
+    else if (func == 2)
+    {
+        fa = f2(a);
+        fb = f2(b);
+    }
+
+    if (abs(fa) > abs(fb))
+    {
+        double temp = a;
+        a = b;
+        b = temp;
+
+        temp = fa;
+        fa = fb;
+        fb = temp;
+    }
+
+    //Print stuff
+    cout << "  n  " << setw(8) << "x  " << setw(10) << "f(x)  " << setw(10) << "next x  " << setw(7) << "err" << endl;
+    for (int i = 3; i <= max; i++)
+    {
+        if (abs(fa) > abs(fb))
+        {
+            double temp = a;
+            a = b;
+            b = temp;
+
+            temp = fa;
+            fa = fb;
+            fb = temp;
+        }
+
+        d = (b - a) / (fb - fa);
+        b = a;
+        fb = fa;
+        d *= fa;
+
+        if (abs(d) < err)
+        {
+            cout << "Converged" << endl;
+            return;
+        }
+
+        a -= d;
+        if (func == 1)
+        {
+            fa = f1(a);
+        }
+        else if (func == 2)
+        {
+            fa = f2(a);
+        }
+        //Print stuff
     }
 }
