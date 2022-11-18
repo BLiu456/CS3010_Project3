@@ -28,7 +28,7 @@ int main()
     int max = 100;
     string func1 = "2x^3 - 11.7x^2 + 17.7x - 5";
     string func2 = "x + 10 - xcosh(50/x)";
-    double a, b, x, err = 0.01, eps = 0.0000001;
+    double a, b, x, err = 0.01, eps = 0.0000001; //Using stopping error of 1%
 
     //Finding the roots of function 2x^3 - 11.7x^2 + 17.7x - 5 
     cout << "---Bisection Method of f(x) = " << func1 << "---\n";
@@ -118,8 +118,17 @@ void bisection(int func, double a, double b, int max, double err)
     }
     else if (func == 2)
     {
-        fa = f2(a);
-        fb = f2(b);
+        if (a != 0 && b != 0)
+        {
+            fa = f2(a);
+            fb = f2(b);
+        }
+        else
+        {
+            cout << "Division by 0 error, can not calculate root" << endl;
+            return;
+        }
+        
     }
     //Displaying table format 
     cout << "  n  " << setw(8) << "a  " << setw(10) << "f(a)  " << setw(8) << "b  " << setw(10) << "f(b)  " << setw(8) << "c  " << setw(10) << "f(c)  " << setw(7) << "err" << endl;
@@ -131,7 +140,7 @@ void bisection(int func, double a, double b, int max, double err)
         cout << right << setfill(' ') << setw(6) << fixed << showpoint << setprecision(4) << a << "  ";
         cout << right << setw(8) << fixed << showpoint << setprecision(4) << fa << "  ";
         cout << right << setw(6) << fixed << showpoint << setprecision(4) << b << "  ";
-        cout << right << setw(8) << fixed << showpoint << setprecision(4) << fb << "  ";
+        cout << right << setw(8) << fixed << showpoint << setprecision(4) << fb << endl;
         cout << "Function has same signs at a and b" << endl;
         return;
     }
@@ -148,7 +157,15 @@ void bisection(int func, double a, double b, int max, double err)
         }
         else if (func == 2)
         {
-            fc = f2(c);
+            if (c != 0)
+            {
+                fc = f2(c);
+            }
+            else
+            {
+                cout << "Division by 0 error, can not calculate root" << endl;
+                return;
+            }
         }
         //Print out data in table format
         cout << right << setw(3) << i << "  ";
@@ -190,8 +207,17 @@ void falsePos(int func, double a, double b, int max, double err)
     }
     else if (func == 2)
     {
-        fa = f2(a);
-        fb = f2(b);
+        if (a != 0 && b != 0)
+        {
+            fa = f2(a);
+            fb = f2(b);
+        }
+        else
+        {
+            cout << "Division by 0 error, can not calculate root" << endl;
+            return;
+        }
+        
     }
 
     cout << "  n  " << setw(8) << "a  " << setw(10) << "f(a)  " << setw(8) << "b  " << setw(10) << "f(b)  " << setw(8) << "c  " << setw(10) << "f(c)  " << setw(7) << "err" << endl;
@@ -203,7 +229,7 @@ void falsePos(int func, double a, double b, int max, double err)
         cout << right << setfill(' ') << setw(6) << fixed << showpoint << setprecision(4) << a << "  ";
         cout << right << setw(8) << fixed << showpoint << setprecision(4) << fa << "  ";
         cout << right << setw(6) << fixed << showpoint << setprecision(4) << b << "  ";
-        cout << right << setw(8) << fixed << showpoint << setprecision(4) << fb << "  ";
+        cout << right << setw(8) << fixed << showpoint << setprecision(4) << fb << endl;
         cout << "Function has same signs at a and b" << endl;
         return;
     }
@@ -222,7 +248,15 @@ void falsePos(int func, double a, double b, int max, double err)
         }
         else if (func == 2)
         {
-            fc = f2(c);
+            if (c != 0)
+            {
+                fc = f2(c);
+            }
+            else
+            {
+                cout << "Division by 0 error, can not calculate root" << endl;
+                return;
+            }
         }
 
         if (i != 1)
@@ -280,7 +314,15 @@ void newtonRaphson(int func, double x, int max, double err, double eps)
         }
         else if (func == 2)
         {
-            fx = f2(x);
+            if (x != 0)
+            {
+                fx = f2(x);
+            }
+            else
+            {
+                cout << "Division by 0 error, can not calculate root" << endl;
+                return;
+            }
         }
 
         if (func == 1)
@@ -289,7 +331,15 @@ void newtonRaphson(int func, double x, int max, double err, double eps)
         }
         else if (func == 2)
         {
-            fp = df2(x);
+            if (x != 0)
+            {
+                fp = df2(x);
+            }
+            else
+            {
+                cout << "Division by 0 error, can not calculate root" << endl;
+                return;
+            }
         }
 
         if (abs(fp) < eps)
@@ -330,8 +380,16 @@ void secant(int func, double a, double b, int max, double err)
     }
     else if (func == 2)
     {
-        fa = f2(a);
-        fb = f2(b);
+        if (a != 0 && b != 0)
+        {
+            fa = f2(a);
+            fb = f2(b);
+        }
+        else
+        {
+            cout << "Division by 0 error, can not calculate root" << endl;
+            return;
+        }
     }
 
     if (abs(fa) > abs(fb))
@@ -371,12 +429,6 @@ void secant(int func, double a, double b, int max, double err)
         fb = fa;
         d *= fa;
 
-        if (abs(d) < err)
-        {
-            cout << "Converged at iteration " << i-1 << ". Root is approximately " << a << endl;
-            return;
-        }
-
         a -= d;
         if (func == 1)
         {
@@ -384,7 +436,15 @@ void secant(int func, double a, double b, int max, double err)
         }
         else if (func == 2)
         {
-            fa = f2(a);
+            if (a != 0)
+            {
+                fa = f2(a);
+            }
+            else
+            {
+                cout << "Division by 0 error, can not calculate root" << endl;
+                return;
+            }
         }
         
         //Print data
@@ -392,6 +452,12 @@ void secant(int func, double a, double b, int max, double err)
         cout << right << setfill(' ') << setw(6) << fixed << showpoint << setprecision(4) << a << "  ";
         cout << right << setw(8) << fixed << showpoint << setprecision(4) << fa << "  ";
         cout << right << setw(9) << setprecision(10) << abs(d) << endl;
+
+        if (abs(d) < err)
+        {
+            cout << "Converged at iteration " << i << ". Root is approximately " << a << endl;
+            return;
+        }
     }
     cout << "Max iterations reached. Either the function diverges or converges very slowly at these points\n";
 }
